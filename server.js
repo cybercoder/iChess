@@ -125,7 +125,6 @@ io.sockets.on('connection', function (socket) {
       'FEN' : '',
     };
 
-
     socket.emit('created', {
       'token': token
     });
@@ -134,8 +133,7 @@ io.sockets.on('connection', function (socket) {
   socket.on('join', function (data) {
     var game, color, time = data.time;
     var reconnected_player =false ;
-    console.log(data) ;
-    console.log(games) ;
+
     if (!(data.token in games)) {
       socket.emit('token-invalid');
       return;
@@ -158,7 +156,7 @@ io.sockets.on('connection', function (socket) {
         return;
       }
       else {
-        socket.emit('reconnect',game) ;
+        socket.emit('player-reconnect',game) ;
       }
     } else if (game.players.length === 1) {
       if (game.players[0].color === 'black') {
@@ -175,17 +173,19 @@ io.sockets.on('connection', function (socket) {
 
     //join room
     socket.join(data.token);
+    if (!reconnected_player) {
+      games[data.token].players.push({
+        'id': socket.id,
+        'session' : socket.request.sessionID,
+        'socket': socket,
+        'color': color,
+        'time': data.time - data.increment + 1,
+        'increment': data.increment
+      });
+    }
 
-    games[data.token].players.push({
-      'id': socket.id,
-      'session' : socket.request.sessionID,
-      'socket': socket,
-      'color': color,
-      'time': data.time - data.increment + 1,
-      'increment': data.increment
-    });
-
-    game.creator.emit('ready', {});
+    if (!reconnected_player)
+      game.creator.emit('ready', {});
 
     socket.emit('joined', {
       'color': color

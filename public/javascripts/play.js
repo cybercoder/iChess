@@ -369,11 +369,11 @@ $(function() {
     $('.feedback-status').text(message);
   });
 
-  $socket.on('reconnect',function (data) {
+  $socket.on('player-reconnect',function (data) {
     alert('reconnect') ;
     var $chess = new Chess(data.fen);
-    setFEN($('.chess_board')[0],fen) ;
-    setFEN($('.chess_board')[1],reverseFEN(fen)) ;
+    setFEN($('.chess_board')[0],data.fen) ;
+    setFEN($('.chess_board')[1],reverseFEN(data.fen)) ;
   });
 
   $socket.on('full', function (data) {
