@@ -551,7 +551,8 @@ table#moves {
   float: left; }
 
 .chess_board {
-  border: 8px solid #5e4a60;
+  background: url('../images/board.jpg') no-repeat center ;
+  border: 40px solid transparent;
   border-radius: 2px;
   width: 500px;
   height: 500px;
@@ -566,7 +567,7 @@ table#moves {
       height: 62.5px;
       line-height: 62.5px;
       text-align: center;
-      background: #fefefe;
+      
       display: block;
       float: left; }
       .chess_board tr td.moving {
@@ -580,9 +581,10 @@ table#moves {
         display: block;
         cursor: pointer; }
 
-.chess_board tr:nth-child(odd) td:nth-child(even),
-.chess_board tr:nth-child(even) td:nth-child(odd) {
-  background: #dad7d2; }
+.chess_board tr:nth-child(even) td:nth-child(even),
+.chess_board tr:nth-child(odd) td:nth-child(odd) {
+  background: url('../images/whitesquare.jpg');
+}
 
 span.feedback {
   color: #424242;

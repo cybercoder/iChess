@@ -133,7 +133,9 @@ io.sockets.on('connection', function (socket) {
 
   socket.on('join', function (data) {
     var game, color, time = data.time;
-
+    var reconnected_player =false ;
+    console.log(data) ;
+    console.log(games) ;
     if (!(data.token in games)) {
       socket.emit('token-invalid');
       return;
@@ -147,11 +149,17 @@ io.sockets.on('connection', function (socket) {
       for (var i=0;i<game.players.length;i++) {
         console.log('++++++++++++++++'+game.players[i].session+'+++++++++++++++');
         if (socket.request.sessionID == game.players[i].session) {
-          console.log('++++++++++++++found++++++++++++++') ;
+          game.players[i].socket = socket ;
+          reconnected_player=true ;
         }
       }
-      socket.emit('full');
-      return;
+      if (!reconnected_player) {
+        socket.emit('full');
+        return;
+      }
+      else {
+        socket.emit('reconnect',game) ;
+      }
     } else if (game.players.length === 1) {
       if (game.players[0].color === 'black') {
         color = 'white';
@@ -274,7 +282,7 @@ io.sockets.on('connection', function (socket) {
           if (opponent) {
             setInterval(function(){opponent.socket.emit('opponent-disconnected')},40*1000);
             clearInterval(games[token].interval);
-            delete games[token];
+            //delete games[token];
           }         
         }
       }

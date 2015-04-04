@@ -1,9 +1,23 @@
 $(function() {
-
+  var pieces = {
+    'k': ['\u2654', '\u265A'],
+    'q': ['\u2655', '\u265B'],
+    'r': ['\u2656', '\u265C'],
+    'b': ['\u2657', '\u265D'],
+    'n': ['\u2658', '\u265E'],
+    'p': ['\u2659', '\u265F']
+  };
   var from, to, promotion, rcvd;
-  var $side  = 'w';
+  var $side  = 'b';
   var $piece = null;
   var $chess = new Chess();
+  //setFEN($('.chess_board')[0],'rn2k3/ppp4p/2b1pnr1/4qpB1/7Q/P1N5/1PP1B1PP/2KR3R b q - 0 15') ;
+  //setFEN($('.chess_board')[1],reverseFEN('rn2k3/ppp4p/2b1pnr1/4qpB1/7Q/P1N5/1PP1B1PP/2KR3R b q - 0 15')) ;
+
+      var fm = $('.feedback-move');
+      var fs = $('.feedback-status');
+
+      $chess.turn() === 'b' ? fm.text('Black to move.') : fm.text('White to move.');
   var $gameOver = false;
   var $chessboardWhite = $('.chess_board.white').clone();
   var $chessboardBlack = $('.chess_board.black').clone();
@@ -355,6 +369,13 @@ $(function() {
     $('.feedback-status').text(message);
   });
 
+  $socket.on('reconnect',function (data) {
+    alert('reconnect') ;
+    var $chess = new Chess(data.fen);
+    setFEN($('.chess_board')[0],fen) ;
+    setFEN($('.chess_board')[1],reverseFEN(fen)) ;
+  });
+
   $socket.on('full', function (data) {
     alert("This game already has two players. You have to create a new one.");
     window.location = '/';
@@ -604,32 +625,45 @@ $(function() {
     }
   });
 
-  function renderFen(fentxt) {
-      fentxt = fentxt.replace(/ .*/g, '');
-      fentxt = fentxt.replace(/r/g, 'x'); // Convert black rooks to 'x' to avoid mixup with <tr></tr> tags
-      fentxt = fentxt.replace(/\//g, '</tr><tr>');
-      fentxt = fentxt.replace(/1/g, '<td></td>');
-      fentxt = fentxt.replace(/2/g, '<td></td><td></td>');
-      fentxt = fentxt.replace(/3/g, '<td></td><td></td><td></td>');
-      fentxt = fentxt.replace(/4/g, '<td></td><td></td><td></td><td></td>');
-      fentxt = fentxt.replace(/5/g, '<td></td><td></td><td></td><td></td><td></td>');
-      fentxt = fentxt.replace(/6/g, '<td></td><td></td><td></td><td></td><td></td><td></td>');
-      fentxt = fentxt.replace(/7/g, '<td></td><td></td><td></td><td></td><td></td><td></td><td></td>');
-      fentxt = fentxt.replace(/8/g, '<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>');
-      fentxt = fentxt.replace(/K/g, '<td>&#9812;</td>');
-      fentxt = fentxt.replace(/Q/g, '<td>&#9813;</td>');
-      fentxt = fentxt.replace(/R/g, '<td>&#9814;</td>');
-      fentxt = fentxt.replace(/B/g, '<td>&#9815;</td>');
-      fentxt = fentxt.replace(/N/g, '<td>&#9816;</td>');
-      fentxt = fentxt.replace(/P/g, '<td>&#9817;</td>');
-      fentxt = fentxt.replace(/k/g, '<td>&#9818;</td>');
-      fentxt = fentxt.replace(/q/g, '<td>&#9819;</td>');
-      fentxt = fentxt.replace(/x/g, '<td>&#9820;</td>');
-      fentxt = fentxt.replace(/b/g, '<td>&#9821;</td>');
-      fentxt = fentxt.replace(/n/g, '<td>&#9822;</td>');
-      fentxt = fentxt.replace(/p/g, '<td>&#9823;</td>');
-      return '<table class="chess_board" cellspacing="0" cellpadding="0"><tr>' + fentxt + '</tr></table>';
-  }
 
+function setFEN(table, fen) {
+    $(table).find('td').each(function() {
+      this.innerHTML='' ;
+    });
+    var arr = (fen || DefaultFen).split(" ")[0].split("/");
+    for (var rank = 0; rank < 8; rank++) {
+        var file = 0;
+        for (var j = 0, len = arr[rank].length; j < len; j++) {
+            var char = arr[rank].charAt(j);
+            if (isNaN(+char)) {
+                var piece = char.toLowerCase();
+                var white = (char != piece);
+                // ChessBoard[rank][file] = (piecesNames.indexOf(piece) + 1) * (white ? 1 : -1);
+                
+                var cell = table.rows[rank].cells[file];
+                cell.innerHTML = '<a class="'+(white ? 'white' : 'black') + piece+'" draggable="true">'+pieces[piece][white ? 0 : 1];
+                //cell.setAttribute("draggable", true);
+                //cell.className = (white ? 'white' : 'black') + piece;
+                file++;
+            } else {
+                var cell = table.rows[rank].cells[file];
+                cell.innerHTML = '' ;
+                file += +char;
+            }
+        }
+    }
+}
+
+function reverseFEN(fen) {
+  var i = fen.indexOf(' ',0) ;
+  var p1=fen.substr(0,i) ; var p2=fen.substr(i) ;
+  var rp1='' ;
+  var j=p1.length ;
+  while (j>0) {
+    rp1+=p1.substring(j - 1, j);
+    j-- ;
+  }
+  return rp1+p2 ;
+}
 
 });
