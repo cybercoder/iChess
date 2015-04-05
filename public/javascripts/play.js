@@ -370,7 +370,7 @@ $(function() {
   });
 
   $socket.on('player-reconnect',function (data) {
-    alert('reconnect') ;
+    alert('reconnect'+data.fen) ;
     var $chess = new Chess(data.fen);
     setFEN($('.chess_board')[0],data.fen) ;
     setFEN($('.chess_board')[1],reverseFEN(data.fen)) ;

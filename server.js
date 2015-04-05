@@ -145,7 +145,6 @@ io.sockets.on('connection', function (socket) {
     if (game.players.length >= 2) {
 
       for (var i=0;i<game.players.length;i++) {
-        console.log('++++++++++++++++'+game.players[i].session+'+++++++++++++++');
         if (socket.request.sessionID == game.players[i].session) {
           game.players[i].socket = socket ;
           reconnected_player=true ;
@@ -156,7 +155,7 @@ io.sockets.on('connection', function (socket) {
         return;
       }
       else {
-        socket.emit('player-reconnect',game) ;
+        socket.emit('player-reconnect',{'fen' : game.FEN}) ;
       }
     } else if (game.players.length === 1) {
       if (game.players[0].color === 'black') {
@@ -184,7 +183,7 @@ io.sockets.on('connection', function (socket) {
       });
     }
 
-    if (!reconnected_player)
+    //if (!reconnected_player)
       game.creator.emit('ready', {});
 
     socket.emit('joined', {
@@ -268,19 +267,21 @@ io.sockets.on('connection', function (socket) {
       }
     }
   })
-
+/*
   socket.on('disconnect', function (data) {
-    var player, opponent, game;
+    var player, opponent, game ;
     for (var token in games) {
     game = games[token];
 
       for (var j in game.players) {
         player = game.players[j];
-
+        
         if (player.socket === socket) {
           opponent = game.players[Math.abs(j - 1)];
           if (opponent) {
-            setInterval(function(){opponent.socket.emit('opponent-disconnected')},40*1000);
+            setInterval(function(){
+              opponent.socket.emit('opponent-disconnected') ;
+            },40*1000);
             clearInterval(games[token].interval);
             //delete games[token];
           }         
@@ -288,7 +289,7 @@ io.sockets.on('connection', function (socket) {
       }
     }
   });
-
+*/
   socket.on('reconnect',function(){
     console.log('reconnected') ;
   });
