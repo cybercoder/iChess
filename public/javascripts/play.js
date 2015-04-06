@@ -1,11 +1,11 @@
 $(function() {
   var pieces = {
-    'k': ['\u2654', '\u265A'],
-    'q': ['\u2655', '\u265B'],
-    'r': ['\u2656', '\u265C'],
-    'b': ['\u2657', '\u265D'],
-    'n': ['\u2658', '\u265E'],
-    'p': ['\u2659', '\u265F']
+    'k': ['wk', 'bk'],
+    'q': ['wq', 'bq'],
+    'r': ['wr', 'br'],
+    'b': ['wb', 'bb'],
+    'n': ['wn', 'bn'],
+    'p': ['wp', 'bp']
   };
   var from, to, promotion, rcvd;
   var $side  = 'b';
@@ -14,10 +14,7 @@ $(function() {
   //setFEN($('.chess_board')[0],'rn2k3/ppp4p/2b1pnr1/4qpB1/7Q/P1N5/1PP1B1PP/2KR3R b q - 0 15') ;
   //setFEN($('.chess_board')[1],reverseFEN('rn2k3/ppp4p/2b1pnr1/4qpB1/7Q/P1N5/1PP1B1PP/2KR3R b q - 0 15')) ;
 
-      var fm = $('.feedback-move');
-      var fs = $('.feedback-status');
 
-      $chess.turn() === 'b' ? fm.text('Black to move.') : fm.text('White to move.');
   var $gameOver = false;
   var $chessboardWhite = $('.chess_board.white').clone();
   var $chessboardBlack = $('.chess_board.black').clone();
@@ -371,9 +368,15 @@ $(function() {
 
   $socket.on('player-reconnect',function (data) {
     alert('reconnect'+data.fen) ;
-    var $chess = new Chess(data.fen);
+    $chess.load(data.fen);
+    console.log($side) ;
     setFEN($('.chess_board')[0],data.fen) ;
     setFEN($('.chess_board')[1],reverseFEN(data.fen)) ;
+      var fm = $('.feedback-move');
+      var fs = $('.feedback-status');
+
+      $chess.turn() === 'b' ? fm.text('Black to move.') : fm.text('White to move.');
+      bindMoveHandlers();
   });
 
   $socket.on('full', function (data) {
@@ -641,7 +644,7 @@ function setFEN(table, fen) {
                 // ChessBoard[rank][file] = (piecesNames.indexOf(piece) + 1) * (white ? 1 : -1);
                 
                 var cell = table.rows[rank].cells[file];
-                cell.innerHTML = '<a class="'+(white ? 'white' : 'black') + piece+'" draggable="true">'+pieces[piece][white ? 0 : 1];
+                cell.innerHTML = '<a class="'+(white ? 'white' : 'black')+' '+ piece+'" draggable="true"><img src="/images/pieces/'+pieces[piece][white ? 0 : 1]+'.png"/>';
                 //cell.setAttribute("draggable", true);
                 //cell.className = (white ? 'white' : 'black') + piece;
                 file++;
