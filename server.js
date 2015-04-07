@@ -147,6 +147,7 @@ io.sockets.on('connection', function (socket) {
       for (var i=0;i<game.players.length;i++) {
         if (socket.request.sessionID == game.players[i].session) {
           game.players[i].socket = socket ;
+          color = game.players[i].color ;
           reconnected_player=true ;
         }
       }

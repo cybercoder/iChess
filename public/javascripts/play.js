@@ -8,7 +8,7 @@ $(function() {
     'p': ['wp', 'bp']
   };
   var from, to, promotion, rcvd;
-  var $side  = 'b';
+  var $side  = 'w';
   var $piece = null;
   var $chess = new Chess();
   //setFEN($('.chess_board')[0],'rn2k3/ppp4p/2b1pnr1/4qpB1/7Q/P1N5/1PP1B1PP/2KR3R b q - 0 15') ;
