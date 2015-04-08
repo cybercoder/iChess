@@ -551,7 +551,6 @@ table#moves {
   float: left; }
 
 .chess_board {
-  background: url('../images/board.jpg') no-repeat center ;
   border: 40px solid transparent;
   border-radius: 2px;
   width: 500px;
@@ -584,6 +583,15 @@ table#moves {
 .chess_board tr:nth-child(even) td:nth-child(even),
 .chess_board tr:nth-child(odd) td:nth-child(odd) {
   background: url('../images/whitesquare.jpg');
+}
+
+.chess_board.white
+{
+  background: url('../images/board.jpg') no-repeat center ;
+}
+
+.chess_board.black{
+  background: url('../images/board0.jpg') no-repeat center ;
 }
 
 span.feedback {
